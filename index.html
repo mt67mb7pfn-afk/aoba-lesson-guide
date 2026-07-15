@@ -342,7 +342,6 @@ function go(dir) {
   if (next < 0 || next >= SLIDES.length) return;
   current = next;
   render();
-  document.querySelector('.slide.active')?.scrollTo({ top: 0 });
 }
 
 // ── 指の動きに追従するドラッグ式ページめくり ──
@@ -392,12 +391,10 @@ function go(dir) {
     const dx = e.changedTouches[0].clientX - startX;
     slidesEl.classList.remove('dragging');
     const threshold = Math.min(width * 0.25, 90);
-    let moved = false;
-    if (dx <= -threshold && current < SLIDES.length - 1) { current++; moved = true; }
-    else if (dx >= threshold && current > 0) { current--; moved = true; }
+    if (dx <= -threshold && current < SLIDES.length - 1) current++;
+    else if (dx >= threshold && current > 0) current--;
     render();
     clearInline();
-    if (moved) document.querySelector('.slide.active')?.scrollTo({ top: 0 });
     reset();
   }, { passive: true });
 
