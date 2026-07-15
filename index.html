@@ -30,9 +30,10 @@
   .slide {
     position: absolute; inset: 0; padding: 1.5rem 1.25rem 1rem; overflow-y: auto;
     scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
-    opacity: 0; transform: translateX(30px); transition: opacity .25s, transform .25s; pointer-events: none;
+    transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1); pointer-events: none;
   }
-  .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+  .slide.active { transform: translateX(0); pointer-events: auto; }
+  .slide.prev { transform: translateX(-100%); }
   .slide-tag { display: inline-block; background: var(--green-light); color: var(--green-dark); font-size: .7rem; font-weight: 700; padding: .2rem .6rem; border-radius: 20px; margin-bottom: .6rem; }
   .slide h2 { font-size: 1.15rem; margin-bottom: .9rem; color: var(--green-dark); }
   .slide p, .slide li { font-size: .92rem; line-height: 1.7; margin-bottom: .5rem; }
@@ -324,7 +325,10 @@ function init() {
 }
 
 function render() {
-  document.querySelectorAll('.slide').forEach((el, i) => el.classList.toggle('active', i === current));
+  document.querySelectorAll('.slide').forEach((el, i) => {
+    el.classList.toggle('active', i === current);
+    el.classList.toggle('prev', i < current);
+  });
   document.querySelectorAll('.dot').forEach((el, i) => el.classList.toggle('active', i === current));
   document.getElementById('prev-btn').disabled = current === 0;
   const nextBtn = document.getElementById('next-btn');
@@ -339,14 +343,21 @@ function go(dir) {
   document.querySelector('.slide.active')?.scrollTo({ top: 0 });
 }
 
-let touchStartX = null;
-document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+let touchStartX = null, touchStartY = null;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
 document.addEventListener('touchend', e => {
   if (touchStartX === null) return;
   const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 60) go(dx < 0 ? 1 : -1);
-  touchStartX = null;
-});
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  // 横方向のスワイプが縦より明確に大きいときだけページ送り（縦スクロール誤動作を防止）
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+    go(dx < 0 ? 1 : -1);
+  }
+  touchStartX = touchStartY = null;
+}, { passive: true });
 
 init();
 </script>
