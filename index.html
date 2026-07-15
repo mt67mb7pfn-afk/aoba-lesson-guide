@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>教習を始める前に | 青葉自動車学校</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,7 +18,7 @@
   body {
     font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
     background: var(--gray-100); color: var(--gray-800);
-    display: flex; flex-direction: column; min-height: 100vh;
+    display: flex; flex-direction: column; height: 100vh; height: 100dvh;
   }
   .site-header { background: var(--green); color: #fff; padding: .9rem 1.25rem; text-align: center; flex-shrink: 0; }
   .site-header h1 { font-size: 1.05rem; font-weight: 700; }
@@ -94,7 +94,7 @@
   .img-modal .close-hint { position: fixed; top: .8rem; right: 1rem; color: #fff; font-size: .85rem; opacity: .9; background: rgba(0,0,0,.45); padding: .3rem .7rem; border-radius: 20px; }
 
   /* フッターナビ */
-  .nav-bar { flex-shrink: 0; background: #fff; border-top: 1px solid var(--gray-200); padding: .7rem 1rem; display: flex; align-items: center; gap: .75rem; }
+  .nav-bar { flex-shrink: 0; background: #fff; border-top: 1px solid var(--gray-200); padding: .7rem 1rem; padding-bottom: calc(.7rem + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: .75rem; }
   .nav-btn { flex: 0 0 auto; padding: .6rem 1.1rem; border-radius: 8px; border: 1.5px solid var(--gray-300); background: #fff; font-size: .85rem; font-weight: 700; color: var(--gray-800); cursor: pointer; }
   .nav-btn.primary { background: var(--green); color: #fff; border-color: var(--green); }
   .nav-btn:disabled { opacity: .35; }
@@ -150,6 +150,10 @@ const SLIDES = [
         <p>技能教習を詰まらずに進めるカギは、<b>各段階の学科をすべて受講し、効果測定（学科テスト）に合格しておくこと</b>です。これが遅れると、技能の予約が取れていても「みきわめ教習」に乗れなくなってしまいます。</p>
         <div class="point"><p>📌 効果測定は、各段階の<b>みきわめ教習の前まで</b>に合格が必要です。</p></div>
         <div class="point"><p>💻 当校では<b>オンライン学科</b>の受講を推奨しています。1日<b>最大5コマ</b>まで受講でき、効率よく学科を進められます。</p><p>※ ご利用には<b>利用規約</b>がありますので、必ずご確認のうえご利用ください。</p></div>
+      </div>
+
+      <div style="background:var(--green-light);border-left:4px solid var(--green-dark);border-radius:6px;padding:.65rem .85rem;margin:.2rem 0 .5rem;font-size:.9rem;line-height:1.75;">
+        <b>💡「みきわめ教習」とは？</b><br>各段階の<b>最後の技能教習</b>のことです。指導員が「次のステップ（修了検定・卒業検定）に進める運転技能が身についているか」を確認します。これを<b>見極（みきわ）め</b>と呼び、合格するとその段階の検定に進めます。
       </div>
 
       <div class="sub-head"><span class="dot-mark"></span>第1段階</div>
