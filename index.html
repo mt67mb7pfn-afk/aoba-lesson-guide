@@ -105,6 +105,30 @@
   .dots { flex: 1; display: flex; justify-content: center; gap: .35rem; flex-wrap: wrap; }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gray-300); }
   .dot.active { background: var(--green); width: 9px; height: 9px; }
+
+  /* ── 印刷用（紙の資料として配布する場合）1スライド＝1ページ ── */
+  @media print {
+    @page { size: A4 portrait; margin: 12mm; }
+    /* 背景色・見出しの色を紙にも印刷する */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    html, body { height: auto; overflow: visible; display: block; background: #fff; }
+    /* 画面用の「1枚だけ表示」レイアウトを解除し、全ページを縦に並べる */
+    #deck { display: block; height: auto; overflow: visible; flex: none; }
+    .slides { position: static; overflow: visible; height: auto; flex: none; }
+    .slide {
+      position: static; inset: auto; transform: none !important;
+      overflow: visible; height: auto; pointer-events: auto; transition: none;
+      padding: 0 0 .5rem; page-break-after: always; break-after: page;
+    }
+    .slide:last-child { page-break-after: auto; break-after: auto; }
+    /* 画面操作用のパーツは印刷しない */
+    .nav-bar, .img-caption { display: none !important; }
+    .img-modal { display: none !important; }
+    .site-header { padding: .5rem; margin-bottom: .6rem; }
+    /* 途中で分断されると読みにくい要素はページ内に収める */
+    .explain-box, .notice, .lesson-img-wrap, .plan-table, .steps > li { break-inside: avoid; page-break-inside: avoid; }
+    .lesson-img-wrap img { max-height: 150mm; width: auto; max-width: 100%; margin: 0 auto; box-shadow: none; }
+  }
 </style>
 </head>
 <body>
