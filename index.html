@@ -128,7 +128,20 @@
     /* 途中で分断されると読みにくい要素はページ内に収める */
     .explain-box, .notice, .lesson-img-wrap, .plan-table, .steps > li { break-inside: avoid; page-break-inside: avoid; }
     .lesson-img-wrap img { max-height: 150mm; width: auto; max-width: 100%; margin: 0 auto; box-shadow: none; }
+    /* 印刷時はアコーディオンをすべて開いた状態で出す */
+    .faq-item { break-inside: avoid; page-break-inside: avoid; }
+    .faq-item .faq-a { max-height: none !important; padding: 0 .95rem .6rem !important; }
+    .faq-q::after { display: none !important; }
   }
+
+  /* よくある質問（アコーディオン） */
+  .faq-item { border: 1px solid var(--gray-300); border-radius: 10px; margin-bottom: .55rem; background: #fff; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+  .faq-q { display: flex; justify-content: space-between; align-items: center; gap: .6rem; width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: .85rem .95rem; font-size: .9rem; font-weight: 700; color: var(--green-dark); font-family: inherit; line-height: 1.5; }
+  .faq-q::after { content: '＋'; flex-shrink: 0; color: var(--green); font-size: 1.1rem; font-weight: 700; }
+  .faq-item.open .faq-q::after { content: '－'; }
+  .faq-item.open .faq-q { border-bottom: 1px solid var(--gray-200); }
+  .faq-a { max-height: 0; overflow: hidden; padding: 0 .95rem; font-size: .875rem; line-height: 1.8; color: var(--gray-800); transition: max-height .28s ease, padding .28s ease; }
+  .faq-item.open .faq-a { max-height: 600px; padding: .75rem .95rem .85rem; }
 </style>
 </head>
 <body>
@@ -328,6 +341,50 @@ const SLIDES = [
       </div>
     `
   },
+  {
+    label: 'よくあるご質問（在校中）',
+    html: `
+      <h2>よくあるご質問</h2>
+      <div class="explain-box">
+        <span class="explain-label">かんたん解説</span>
+        <p>在校中の教習生の方から、よく寄せられるご質問をまとめました。質問をタップすると答えが開きます。不明点は受付でもお気軽にご確認ください。</p>
+      </div>
+
+      <div class="faq-item open">
+        <button class="faq-q" onclick="toggleFaq(this)">1日に何時限、教習を受講できますか？</button>
+        <div class="faq-a">技能教習は、<b>第1段階は1日2時限まで</b>、<b>第2段階は1日3時限まで</b>受講できます。学科教習は時間割表に沿って受講してください。教習段階や予約状況によって異なる場合がありますので、詳しくは受付または校内掲示でご確認ください。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">キャンセル料はかかりますか？</button>
+        <div class="faq-a">はい、<b>当日キャンセル・無断欠席・遅刻</b>などの場合はキャンセル料がかかります。<br>・技能教習：1時限につき <b>3,000円</b><br>・技能検定／仮免学科試験／仮免適性試験の当日キャンセル：<b>1,000円</b><br>予約変更が必要な場合は、できるだけ早めにご確認ください。<b>（お支払いは現金のみ）</b></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">効果測定がなかなか受かりません。どうすればいいですか？</button>
+        <div class="faq-a">教本の復習と問題演習を繰り返すことが大切です。<b>標識・優先関係・安全確認・駐停車禁止場所</b>などは特に間違えやすいため、苦手分野を重点的に見直してください。不安がある場合は、受付や指導員にお気軽にご相談ください。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">検定はいつ行っていますか？どのくらい時間がかかりますか？</button>
+        <div class="faq-a">検定の日程や集合時間は、時期や混雑状況によって変わります。<b>最新の校内掲示や受付でご確認ください。</b>仮免学科試験は指定時刻までに教室で待機が必要です。修了検定・卒業検定ともに、受付・説明・検定実施を含めて時間がかかりますので、当日は<b>余裕を持って</b>お越しください。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">検定コースは覚えるのですか？</button>
+        <div class="faq-a">コースの丸暗記よりも、<b>安全確認・合図・走行位置・速度調整</b>などを基本どおりにできることが大切です。進行方向や注意点は事前に案内される場合がありますので、その内容をよく確認して臨んでください。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">指導員の指名や、忌避（NG）の希望はできますか？</button>
+        <div class="faq-a">指名・忌避などのご希望がある場合は、<b>受付へご相談ください。</b>予約状況や教習の進み具合によってはご希望に添えない場合もありますが、できる範囲で対応します。気になる点がある場合は、早めのご相談がおすすめです。</div>
+      </div>
+
+      <div class="notice green">
+        💡 予約の取り方・キャンセル待ち・「みきわめ」については、前のページで詳しくご案内しています。
+      </div>
+    `
+  },
 ];
 
 let current = 0;
@@ -338,6 +395,10 @@ function openImgModal(src) {
 }
 function closeImgModal() {
   document.getElementById('img-modal').classList.remove('active');
+}
+// よくある質問のアコーディオン開閉
+function toggleFaq(btn) {
+  btn.parentElement.classList.toggle('open');
 }
 
 function init() {
