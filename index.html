@@ -206,7 +206,11 @@
   .hr-box.mt { border-color: var(--orange); }
   .hr-box.mt .hd { background: var(--orange); }
   .hr-box.mt .vl { color: #b04a08; }
-  .hr-note { font-size: .72rem; color: var(--gray-600); margin-top: .3rem; line-height: 1.7; }
+  /* 注釈（※で始まる補足）。本文より一段小さく、控えめな色にする
+     ※ .slide p の指定より強くするため .slide を付けている */
+  .slide .hr-note, .hr-note { font-size: .7rem; color: #8b9490; margin-top: .35rem;
+                              line-height: 1.65; margin-bottom: 0; }
+  .slide .hr-note b { font-weight: 700; color: var(--gray-600); }
 
   /* 合計まとめ */
   .total { border: 2px solid var(--green); border-radius: 12px; padding: .9rem 1rem; margin-top: 1.1rem; background: #fff; }
