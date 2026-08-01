@@ -20,15 +20,21 @@
     background: var(--gray-100); color: var(--gray-800);
     display: flex; flex-direction: column; height: 100vh; height: 100dvh;
   }
-  .site-header { background: var(--green); color: #fff; padding: .9rem 1.25rem; text-align: center; flex-shrink: 0; }
+  /* ヘッダー：高さを詰め、下スクロール時は隠して表示領域を広げる */
+  .site-header { background: var(--green); color: #fff; padding: .5rem 1.25rem; text-align: center;
+                 flex-shrink: 0; overflow: hidden; max-height: 68px;
+                 transition: max-height .28s ease, padding .28s ease, opacity .2s ease; }
+  .site-header.hide { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; }
   .site-header h1 { font-size: 1.05rem; font-weight: 700; }
   .site-header p { font-size: .72rem; opacity: .9; margin-top: .15rem; }
 
   /* スライド本体 */
-  #deck { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  #deck { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
   .slides { flex: 1; overflow: hidden; position: relative; }
   .slide {
-    position: absolute; inset: 0; padding: 1.5rem 1.25rem 1rem; overflow-y: auto;
+    position: absolute; inset: 0; overflow-y: auto;
+    /* 下は半透明ナビの下に文字が隠れないよう広めに取る */
+    padding: 1.2rem 1.25rem calc(5.2rem + env(safe-area-inset-bottom));
     scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
     transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1); pointer-events: none;
   }
@@ -101,7 +107,12 @@
   .img-modal .close-hint { position: fixed; top: .8rem; right: 1rem; color: #fff; font-size: .85rem; opacity: .9; background: rgba(0,0,0,.45); padding: .3rem .7rem; border-radius: 20px; }
 
   /* フッターナビ */
-  .nav-bar { flex-shrink: 0; background: #fff; border-top: 1px solid var(--gray-200); padding: .7rem 1rem; padding-bottom: calc(.7rem + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: .75rem; }
+  /* 下部ナビ：半透明にしてスライドの上に重ねる（表示領域を稼ぐ） */
+  .nav-bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
+             background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+             border-top: 1px solid rgba(0,0,0,.06); padding: .6rem 1rem;
+             padding-bottom: calc(.6rem + env(safe-area-inset-bottom));
+             display: flex; align-items: center; gap: .75rem; }
   .nav-btn { flex: 0 0 auto; padding: .6rem 1.1rem; border-radius: 8px; border: 1.5px solid var(--gray-300); background: #fff; font-size: .85rem; font-weight: 700; color: var(--gray-800); cursor: pointer; }
   .nav-btn.primary { background: var(--green); color: #fff; border-color: var(--green); }
   .nav-btn:disabled { opacity: .35; }
@@ -702,6 +713,7 @@ function init() {
 }
 
 function render() {
+  if (window.resetHeader) window.resetHeader();   // ページを切り替えたらヘッダーを表示に戻す
   document.querySelectorAll('.slide').forEach((el, i) => {
     el.classList.toggle('active', i === current);
     el.classList.toggle('prev', i < current);
@@ -781,7 +793,51 @@ function go(dir) {
   }, { passive: true });
 })();
 
+/* ── スクロールでヘッダーを隠す ──
+   下に読み進めるときは隠して表示領域を広げ、上に戻すと再表示する。
+   ページを切り替えたときは必ず表示に戻す。 */
+(function () {
+  const header = document.querySelector('.site-header');
+  let lastTop = 0;
+
+  let paused = false;   // ページ切替の直後は、前ページのスクロール通知を無視する
+
+  function onScroll(e) {
+    if (paused) return;
+    if (!e.target.classList.contains('active')) return;   // 表示中のページ以外は無視
+    const top = e.target.scrollTop;
+    if (top < 40) {                      // 先頭付近では必ず表示
+      header.classList.remove('hide');
+    } else if (top > lastTop + 6) {      // 下へ読み進めている
+      header.classList.add('hide');
+    } else if (top < lastTop - 6) {      // 上へ戻している
+      header.classList.remove('hide');
+    }
+    lastTop = top;
+  }
+
+  // 各スライドがそれぞれスクロールするので、全部に登録する
+  function bind() {
+    document.querySelectorAll('.slide').forEach(el => {
+      el.removeEventListener('scroll', onScroll);
+      el.addEventListener('scroll', onScroll, { passive: true });
+    });
+  }
+  // ページを切り替えたときに render() から呼ばれる
+  window.resetHeader = function () {
+    header.classList.remove('hide');
+    lastTop = 0;
+    paused = true;                       // 切替直後の通知を無視
+    clearTimeout(window.__hdrTimer);
+    window.__hdrTimer = setTimeout(() => { paused = false; }, 350);
+  };
+  // スライドが作られてから登録する（init 実行後）
+  window.bindHeaderScroll = bind;
+})();
+
 init();
+bindHeaderScroll();   // スライド生成後にスクロール監視を登録
+
 </script>
 </body>
 </html>
